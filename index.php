@@ -1,4 +1,7 @@
 <?php
+include 'autoloader.php';
+session_start();
+
 $uri = $_SERVER['REQUEST_URI'];
 $self = $_SERVER['PHP_SELF'];
 
@@ -7,9 +10,8 @@ $self = str_replace('index.php', '', $self);
 $uri = str_replace($self, '', $uri);
 
 $args = explode('/', $uri);
-$controllerName = ucfirst(array_shift($args)) . 'Controller';
+$controllerName = 'FPopov\\Controllers\\' . ucfirst(array_shift($args)) . 'Controller';
 $actionName = array_shift($args);
-
 
 if (class_exists($controllerName)) {
     $controller = new $controllerName();
