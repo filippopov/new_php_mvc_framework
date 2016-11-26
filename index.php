@@ -10,18 +10,13 @@ $self = str_replace('index.php', '', $self);
 $uri = str_replace($self, '', $uri);
 
 $args = explode('/', $uri);
-$controllerName = 'FPopov\\Controllers\\' . ucfirst(array_shift($args)) . 'Controller';
+
+$controllerName = array_shift($args);
+
 $actionName = array_shift($args);
 
-if (class_exists($controllerName)) {
-    $controller = new $controllerName();
-    call_user_func_array(
-        [
-            $controller,
-            $actionName
-        ],
-        $args
-    );
-} else {
-    echo "<h1>Page Not Found</h1>";
-}
+$mvcContext = new \FPopov\Core\MVC\MVCContext($controllerName, $actionName, $self, $args);
+
+$app = new \FPopov\Core\Application($mvcContext);
+
+$app->start();

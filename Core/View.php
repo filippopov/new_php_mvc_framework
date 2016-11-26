@@ -9,7 +9,7 @@
 namespace FPopov\Core;
 
 
-class View
+class View implements ViewInterface
 {
     const VIEWS_FOLDER = 'views';
     const PARTIALS_FOLDER = 'partials';

@@ -10,6 +10,9 @@ namespace FPopov\Controllers;
 
 
 use FPopov\Core\View;
+use FPopov\Core\ViewInterface;
+use FPopov\Models\Binding\User\UserLoginBindingModel;
+use FPopov\Models\Binding\User\UserRegisterBindingModel;
 use FPopov\Services\UserService;
 use FPopov\UserExceptions\UserException;
 
@@ -22,10 +25,10 @@ class UsersController
         $view->render('users/login');
     }
 
-    public function loginPost()
+    public function loginPost(UserLoginBindingModel $bindingModel)
     {
-        $username = $_POST['username'];
-        $password = $_POST['password'];
+        $username = $bindingModel->getUsername();
+        $password = $bindingModel->getPassword();
 
         $service = new UserService();
 
@@ -39,17 +42,15 @@ class UsersController
         throw new UserException('Please enter valid data');
     }
 
-    public function register()
+    public function register(ViewInterface $view)
     {
-        $view = new View();
-
         $view->render('users/register');
     }
 
-    public function registerPost()
+    public function registerPost(UserRegisterBindingModel $bindingModel)
     {
-        $username = $_POST['username'];
-        $password = $_POST['password'];
+        $username = $bindingModel->getUsername();
+        $password = $bindingModel->getPassword();
 
         $service = new UserService();
 
