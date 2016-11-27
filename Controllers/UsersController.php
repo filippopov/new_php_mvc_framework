@@ -9,28 +9,24 @@
 namespace FPopov\Controllers;
 
 
-use FPopov\Core\View;
 use FPopov\Core\ViewInterface;
 use FPopov\Models\Binding\User\UserLoginBindingModel;
 use FPopov\Models\Binding\User\UserRegisterBindingModel;
-use FPopov\Services\UserService;
+use FPopov\Models\View\ApplicationViewModel;
+use FPopov\Services\UserServiceInterface;
 use FPopov\UserExceptions\UserException;
 
 class UsersController
 {
-    public function login()
+    public function login(ViewInterface $view)
     {
-        $view = new View();
-
-        $view->render('users/login');
+        $view->render();
     }
 
-    public function loginPost(UserLoginBindingModel $bindingModel)
+    public function loginPost(UserLoginBindingModel $bindingModel, UserServiceInterface $service)
     {
         $username = $bindingModel->getUsername();
         $password = $bindingModel->getPassword();
-
-        $service = new UserService();
 
         $loginResult = $service->login($username, $password);
 
@@ -44,15 +40,15 @@ class UsersController
 
     public function register(ViewInterface $view)
     {
-        $view->render('users/register');
+        $viewModel = new ApplicationViewModel('Blog');
+
+        $view->render($viewModel);
     }
 
-    public function registerPost(UserRegisterBindingModel $bindingModel)
+    public function registerPost(UserRegisterBindingModel $bindingModel, UserServiceInterface $service)
     {
         $username = $bindingModel->getUsername();
         $password = $bindingModel->getPassword();
-
-        $service = new UserService();
 
         $registerResult = $service->register($username, $password);
 
@@ -64,14 +60,12 @@ class UsersController
         throw new UserException('Please enter valid data');
     }
 
-    public function profile()
+    public function profile(ViewInterface $view)
     {
-        $view = new View();
-
         $model = [
             'id' => $_SESSION['id']
         ];
 
-        $view->render('users/profile', $model);
+        $view->render($model);
     }
 }

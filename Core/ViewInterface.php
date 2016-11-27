@@ -11,5 +11,7 @@ namespace FPopov\Core;
 
 interface ViewInterface
 {
-    public function render($templateName, $model = null);
+    public function render($templateName = null, $model = null);
+
+    public function uri($controller, $action, $params);
 }

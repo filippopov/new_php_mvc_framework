@@ -52,14 +52,12 @@ class Application
             $parameterClass = $parameter->getClass();
             if($parameterClass !== null) {
                 $className = $parameterClass->getName();
-                $instance = new $className();
-                foreach ($parameterClass->getProperties() as $field) {
-                    $field->setAccessible(true);
-                    if (array_key_exists($field->getName(), $_POST)) {
-                        $field->setValue($instance, $_POST[$field->getName()]);
-                    }
-
+                if (! $parameterClass->isInterface()) {
+                    $instance = $this->mapForm($_POST, $parameterClass);
+                } else {
+                    $instance = $this->resolve($this->dependencies[$className]);
                 }
+
                 $args[] = $instance;
             }
         }
@@ -74,6 +72,18 @@ class Application
                 $args
             );
         }
+    }
+
+    public function registerDependency($interfaceName, $implementationName)
+    {
+        $this->dependencies[$interfaceName] = $implementationName;
+    }
+
+    public function addClass($interfaceName, $instance)
+    {
+        $implementationName = get_class($instance);
+        $this->dependencies[$interfaceName] = $implementationName;
+        $this->resolveDependencies[$implementationName] = $instance;
     }
 
     private function resolve($className)
@@ -109,9 +119,24 @@ class Application
             $parameterToInstantiate[] = $implementationInstance;
         }
 
-        $result = $refClass->newInstance($parameterToInstantiate);
+        $result = $refClass->newInstanceArgs($parameterToInstantiate);
         $this->resolveDependencies[$className] = $result;
 
         return $result;
+    }
+
+    private function mapForm($form, \ReflectionClass $parameterClass)
+    {
+        $className = $parameterClass->getName();
+        $instance = new $className();
+        foreach ($parameterClass->getProperties() as $field) {
+            $field->setAccessible(true);
+            if (array_key_exists($field->getName(), $form)) {
+                $field->setValue($instance, $_POST[$field->getName()]);
+            }
+
+        }
+
+        return $instance;
     }
 }

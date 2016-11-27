@@ -9,6 +9,8 @@
 namespace FPopov\Core;
 
 
+use FPopov\Core\MVC\MVCContext;
+
 class View implements ViewInterface
 {
     const VIEWS_FOLDER = 'views';
@@ -18,8 +20,25 @@ class View implements ViewInterface
     const STATIC_EXTENSION = '.html';
     const VIEW_EXTENSION = '.php';
 
-    public function render($templateName, $model = null)
+    private $mvcContext;
+
+    public function __construct(MVCContext $MVCContext)
     {
+        $this->mvcContext = $MVCContext;
+    }
+
+    public function render($templateName = null, $model = null)
+    {
+        $controller = $this->mvcContext->getController();
+        $action = $this->mvcContext->getAction();
+
+        if ($templateName === null ) {
+            $templateName = $controller . DIRECTORY_SEPARATOR . $action;
+        } elseif (! is_string($templateName)) {
+            $model = $templateName;
+            $templateName = $controller . DIRECTORY_SEPARATOR . $action;
+        }
+
         include self::VIEWS_FOLDER
             . DIRECTORY_SEPARATOR
             . self::PARTIALS_FOLDER
@@ -39,5 +58,15 @@ class View implements ViewInterface
             . DIRECTORY_SEPARATOR
             . self::FOOTER_NAME
             . self::STATIC_EXTENSION;
+    }
+
+    public function uri($controller, $action, $params)
+    {
+        $url = $this->mvcContext->getUriJunk()
+            . $controller
+            . DIRECTORY_SEPARATOR
+            . $action;
+
+        return $url;
     }
 }

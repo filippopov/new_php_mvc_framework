@@ -1,7 +1,7 @@
 <?php
 namespace FPopov\Adapter;
 
-class DatabaseStatement
+class DatabaseStatement implements DatabaseStatementInterface
 {
     private $stmt;
 

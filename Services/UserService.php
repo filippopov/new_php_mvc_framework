@@ -10,25 +10,17 @@ namespace FPopov\Services;
 
 
 use FPopov\Adapter\Database;
-use FPopov\Config\DbConfig;
+use FPopov\Adapter\DatabaseInterface;
 use FPopov\Models\DB\User;
 
-class UserService
+class UserService implements UserServiceInterface
 {
     /** @var Database */
     private $db;
 
-    public function __construct()
+    public function __construct(DatabaseInterface $db)
     {
-        Database::setInstance(
-            DbConfig::DB_HOST,
-            DbConfig::DB_USER,
-            DbConfig::DB_PASS,
-            DbConfig::DB_NAME,
-            'default'
-        );
-
-        $this->db = Database::getInstance('default');
+        $this->db = $db;
     }
 
     public function login($username, $password) : bool

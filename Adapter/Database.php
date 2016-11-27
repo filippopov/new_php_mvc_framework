@@ -1,7 +1,7 @@
 <?php
 namespace FPopov\Adapter;
 
-class Database
+class Database implements DatabaseInterface
 {
     private static $instances = [];
 
@@ -12,7 +12,7 @@ class Database
         $this->pdo = new \PDO("mysql:host=$host;dbname=$dbName", $user, $pass);
     }
 
-    public function prepare($statement)
+    public function prepare($statement) : DatabaseStatementInterface
     {
         return new DatabaseStatement($this->pdo->prepare($statement));
     }

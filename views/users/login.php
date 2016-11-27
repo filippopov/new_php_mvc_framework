@@ -1,6 +1,9 @@
+<?php
+    /** @var \FPopov\Core\ViewInterface $this */
+?>
 <div class="container">
     <div class="well bs-component">
-        <form class="form-horizontal" method="post" action="/new_mvc_php_framework/users/loginPost">
+        <form class="form-horizontal" method="post" action="<?php echo $this->uri('users', 'loginPost', [])?>">
             <fieldset>
                 <legend>Login</legend>
                 <div class="form-group">
