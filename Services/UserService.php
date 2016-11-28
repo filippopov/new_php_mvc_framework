@@ -11,16 +11,20 @@ namespace FPopov\Services;
 
 use FPopov\Adapter\Database;
 use FPopov\Adapter\DatabaseInterface;
+use FPopov\Core\MVC\SessionInterface;
 use FPopov\Models\DB\User;
 
 class UserService implements UserServiceInterface
 {
     /** @var Database */
     private $db;
+    /** @var  SessionInterface */
+    private $session;
 
-    public function __construct(DatabaseInterface $db)
+    public function __construct(DatabaseInterface $db, SessionInterface $session)
     {
         $this->db = $db;
+        $this->session = $session;
     }
 
     public function login($username, $password) : bool
@@ -62,7 +66,7 @@ class UserService implements UserServiceInterface
         $hash = $user->getPassword();
 
         if (password_verify($password, $hash)) {
-            $_SESSION['id'] = $user->getId();
+            $this->session->set('id', $user->getId());
             return true;
         }
 

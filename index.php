@@ -34,6 +34,8 @@ $app->addClass(\FPopov\Core\MVC\MVCContext::class, $mvcContext);
 
 $app->addClass(\FPopov\Adapter\DatabaseInterface::class, \FPopov\Adapter\Database::getInstance($dbInstanceName));
 
+$app->addClass(\FPopov\Core\MVC\SessionInterface::class, new \FPopov\Core\MVC\Session($_SESSION));
+
 $app->registerDependency(\FPopov\Core\ViewInterface::class, \FPopov\Core\View::class);
 $app->registerDependency(\FPopov\Services\UserServiceInterface::class, \FPopov\Services\UserService::class);
 

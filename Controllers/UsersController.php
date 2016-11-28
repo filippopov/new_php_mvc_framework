@@ -9,6 +9,7 @@
 namespace FPopov\Controllers;
 
 
+use FPopov\Core\MVC\SessionInterface;
 use FPopov\Core\ViewInterface;
 use FPopov\Models\Binding\User\UserLoginBindingModel;
 use FPopov\Models\Binding\User\UserRegisterBindingModel;
@@ -18,17 +19,26 @@ use FPopov\UserExceptions\UserException;
 
 class UsersController
 {
-    public function login(ViewInterface $view)
+    private $view;
+    private $service;
+
+    public function __construct(ViewInterface $view, UserServiceInterface $service)
     {
-        $view->render();
+        $this->view = $view;
+        $this->service = $service;
     }
 
-    public function loginPost(UserLoginBindingModel $bindingModel, UserServiceInterface $service)
+    public function login()
+    {
+        $this->view->render();
+    }
+
+    public function loginPost(UserLoginBindingModel $bindingModel)
     {
         $username = $bindingModel->getUsername();
         $password = $bindingModel->getPassword();
 
-        $loginResult = $service->login($username, $password);
+        $loginResult = $this->service->login($username, $password);
 
         if ($loginResult) {
             header('Location: profile');
@@ -38,19 +48,19 @@ class UsersController
         throw new UserException('Please enter valid data');
     }
 
-    public function register(ViewInterface $view)
+    public function register()
     {
         $viewModel = new ApplicationViewModel('Blog');
 
-        $view->render($viewModel);
+        $this->view->render($viewModel);
     }
 
-    public function registerPost(UserRegisterBindingModel $bindingModel, UserServiceInterface $service)
+    public function registerPost(UserRegisterBindingModel $bindingModel)
     {
         $username = $bindingModel->getUsername();
         $password = $bindingModel->getPassword();
 
-        $registerResult = $service->register($username, $password);
+        $registerResult = $this->service->register($username, $password);
 
         if ($registerResult) {
             header('Location: login');
@@ -60,12 +70,12 @@ class UsersController
         throw new UserException('Please enter valid data');
     }
 
-    public function profile(ViewInterface $view)
+    public function profile(SessionInterface $session)
     {
         $model = [
-            'id' => $_SESSION['id']
+            'id' => $session->get('id')
         ];
 
-        $view->render($model);
+        $this->view->render($model);
     }
 }

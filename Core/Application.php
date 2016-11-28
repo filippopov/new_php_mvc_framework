@@ -63,7 +63,7 @@ class Application
         }
 
         if (class_exists($controllerFullNameWithNamespace)) {
-            $controller = new $controllerFullNameWithNamespace();
+            $controller = $this->resolve($controllerFullNameWithNamespace);
             call_user_func_array(
                 [
                     $controller,
@@ -88,6 +88,10 @@ class Application
 
     private function resolve($className)
     {
+        if (array_key_exists($className, $this->resolveDependencies)) {
+            return $this->resolveDependencies[$className];
+        }
+
         $refClass = new \ReflectionClass($className);
         $constructor = $refClass->getConstructor();
 
