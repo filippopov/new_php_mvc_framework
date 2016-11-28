@@ -44,7 +44,7 @@ class View implements ViewInterface
             . self::PARTIALS_FOLDER
             . DIRECTORY_SEPARATOR
             . self::HEADER_NAME
-            . self::STATIC_EXTENSION;
+            . self::VIEW_EXTENSION;
 
 
         include self::VIEWS_FOLDER
@@ -57,15 +57,19 @@ class View implements ViewInterface
             . self::PARTIALS_FOLDER
             . DIRECTORY_SEPARATOR
             . self::FOOTER_NAME
-            . self::STATIC_EXTENSION;
+            . self::VIEW_EXTENSION;
     }
 
-    public function uri($controller, $action, $params)
+    public function uri($controller, $action, $params = [])
     {
         $url = $this->mvcContext->getUriJunk()
             . $controller
             . DIRECTORY_SEPARATOR
             . $action;
+
+        if (! empty($params)) {
+            $url .= DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $params);
+        }
 
         return $url;
     }

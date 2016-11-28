@@ -6,12 +6,10 @@
  * Time: 11:00
  */
 
-namespace FPopov\Services;
+namespace FPopov\Services\User;
 
 
 interface UserServiceInterface
 {
-    public function login($username, $password) : bool;
-
     public function register($username, $password) : bool;
 }

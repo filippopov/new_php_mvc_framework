@@ -31,12 +31,13 @@ $mvcContext = new \FPopov\Core\MVC\MVCContext($controllerName, $actionName, $sel
 $app = new \FPopov\Core\Application($mvcContext);
 
 $app->addClass(\FPopov\Core\MVC\MVCContext::class, $mvcContext);
-
 $app->addClass(\FPopov\Adapter\DatabaseInterface::class, \FPopov\Adapter\Database::getInstance($dbInstanceName));
-
 $app->addClass(\FPopov\Core\MVC\SessionInterface::class, new \FPopov\Core\MVC\Session($_SESSION));
 
 $app->registerDependency(\FPopov\Core\ViewInterface::class, \FPopov\Core\View::class);
-$app->registerDependency(\FPopov\Services\UserServiceInterface::class, \FPopov\Services\UserService::class);
+$app->registerDependency(\FPopov\Services\User\UserServiceInterface::class, \FPopov\Services\User\UserService::class);
+$app->registerDependency(\FPopov\Services\Application\EncryptionServiceInterface::class, \FPopov\Services\Application\BCryptEncryptionService::class);
+$app->registerDependency(\FPopov\Services\Application\AuthenticationServiceInterface::class, \FPopov\Services\Application\AuthenticationService::class);
+$app->registerDependency(\FPopov\Services\Application\ResponseServiceInterface::class, \FPopov\Services\Application\ResponseService::class);
 
 $app->start();

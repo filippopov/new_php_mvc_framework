@@ -2,11 +2,11 @@
 /**
  * Created by PhpStorm.
  * User: Popov
- * Date: 25.11.2016 г.
- * Time: 21:26
+ * Date: 28.11.2016 г.
+ * Time: 19:02
  */
 
-namespace FPopov\Services;
+namespace FPopov\Services\Application;
 
 
 use FPopov\Adapter\Database;
@@ -14,17 +14,27 @@ use FPopov\Adapter\DatabaseInterface;
 use FPopov\Core\MVC\SessionInterface;
 use FPopov\Models\DB\User;
 
-class UserService implements UserServiceInterface
+class AuthenticationService implements AuthenticationServiceInterface
 {
-    /** @var Database */
     private $db;
-    /** @var  SessionInterface */
     private $session;
+    private $encryptionService;
 
-    public function __construct(DatabaseInterface $db, SessionInterface $session)
+    public function __construct(DatabaseInterface $db, SessionInterface $session, EncryptionServiceInterface $encryptionService)
     {
         $this->db = $db;
         $this->session = $session;
+        $this->encryptionService = $encryptionService;
+    }
+
+    public function isAuthenticated() : bool
+    {
+        return $this->session->exists('id');
+    }
+
+    public function logout()
+    {
+        $this->session->destroy();
     }
 
     public function login($username, $password) : bool
@@ -58,36 +68,18 @@ class UserService implements UserServiceInterface
 
         /** @var User $user */
         $user = $stmt->fetchObject(User::class);
-        
+
         if (empty($user)) {
             return false;
         }
 
         $hash = $user->getPassword();
 
-        if (password_verify($password, $hash)) {
+        if ($this->encryptionService->verify($password, $hash)) {
             $this->session->set('id', $user->getId());
             return true;
         }
 
         return false;
-    }
-
-    public function register($username, $password) : bool
-    {
-        $query = "
-            INSERT INTO 
-                users (username, password) 
-            VALUES (?, ?);
-        ";
-
-        $stmt = $this->db->prepare($query);
-
-        return $stmt->execute(
-            [
-                $username,
-                password_hash($password, PASSWORD_BCRYPT)
-            ]
-        );
     }
 }

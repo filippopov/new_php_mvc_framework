@@ -14,18 +14,25 @@ use FPopov\Core\ViewInterface;
 use FPopov\Models\Binding\User\UserLoginBindingModel;
 use FPopov\Models\Binding\User\UserRegisterBindingModel;
 use FPopov\Models\View\ApplicationViewModel;
-use FPopov\Services\UserServiceInterface;
+use FPopov\Services\Application\AuthenticationService;
+use FPopov\Services\Application\AuthenticationServiceInterface;
+use FPopov\Services\Application\ResponseServiceInterface;
+use FPopov\Services\User\UserServiceInterface;
 use FPopov\UserExceptions\UserException;
 
 class UsersController
 {
     private $view;
     private $service;
+    private $authenticationService;
+    private $responseService;
 
-    public function __construct(ViewInterface $view, UserServiceInterface $service)
+    public function __construct(ViewInterface $view, UserServiceInterface $service, AuthenticationServiceInterface $authenticationService, ResponseServiceInterface $responseService)
     {
         $this->view = $view;
         $this->service = $service;
+        $this->authenticationService = $authenticationService;
+        $this->responseService = $responseService;
     }
 
     public function login()
@@ -38,10 +45,10 @@ class UsersController
         $username = $bindingModel->getUsername();
         $password = $bindingModel->getPassword();
 
-        $loginResult = $this->service->login($username, $password);
+        $loginResult = $this->authenticationService->login($username, $password);
 
         if ($loginResult) {
-            header('Location: profile');
+            $this->responseService->redirect('users', 'profile');
             exit();
         }
 
@@ -63,7 +70,7 @@ class UsersController
         $registerResult = $this->service->register($username, $password);
 
         if ($registerResult) {
-            header('Location: login');
+            $this->responseService->redirect('users', 'login');
             exit();
         }
 
