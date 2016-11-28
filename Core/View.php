@@ -17,7 +17,6 @@ class View implements ViewInterface
     const PARTIALS_FOLDER = 'partials';
     const HEADER_NAME = 'header';
     const FOOTER_NAME = 'footer';
-    const STATIC_EXTENSION = '.html';
     const VIEW_EXTENSION = '.php';
 
     private $mvcContext;
@@ -31,6 +30,7 @@ class View implements ViewInterface
     {
         $controller = $this->mvcContext->getController();
         $action = $this->mvcContext->getAction();
+        $uriJunk = $this->mvcContext->getUriJunk();
 
         if ($templateName === null ) {
             $templateName = $controller . DIRECTORY_SEPARATOR . $action;

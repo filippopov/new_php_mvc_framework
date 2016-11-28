@@ -9,7 +9,14 @@
 namespace FPopov\Services\User;
 
 
+use FPopov\Models\Binding\User\UserProfileEditBindingModel;
+use FPopov\Models\DB\User;
+
 interface UserServiceInterface
 {
     public function register($username, $password) : bool;
+
+    public function findOne($id) : User;
+
+    public function edit(UserProfileEditBindingModel $bindingModel);
 }

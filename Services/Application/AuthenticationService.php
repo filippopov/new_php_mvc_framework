@@ -16,6 +16,8 @@ use FPopov\Models\DB\User;
 
 class AuthenticationService implements AuthenticationServiceInterface
 {
+    const AUTHENTICATION_ID = 'id';
+
     private $db;
     private $session;
     private $encryptionService;
@@ -29,7 +31,7 @@ class AuthenticationService implements AuthenticationServiceInterface
 
     public function isAuthenticated() : bool
     {
-        return $this->session->exists('id');
+        return $this->session->exists(self::AUTHENTICATION_ID);
     }
 
     public function logout()
@@ -81,5 +83,10 @@ class AuthenticationService implements AuthenticationServiceInterface
         }
 
         return false;
+    }
+
+    public function getUserId()
+    {
+        return $this->session->get(self::AUTHENTICATION_ID);
     }
 }

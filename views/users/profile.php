@@ -1,2 +1,10 @@
-<h1>Hi</h1>
-<?php echo $model['id'] ?>
+<?php
+/**
+ * @var \FPopov\Core\ViewInterface $this
+ * @var \FPopov\Models\View\UserProfileViewModel $model
+ */
+?>
+
+<h1>Welcome <?php echo $model->getUsername()?></h1>
+
+<a href="<?php echo $this->uri('users', 'profileEdit', [$model->getId()])?>">Edit Your Profile</a>

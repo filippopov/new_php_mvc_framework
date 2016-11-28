@@ -1,3 +1,7 @@
+<?php
+$uriJunk = isset($uriJunk) ? $uriJunk : '';
+?>
+
 <!DOCTYPE html>
 <!--[if IE 8]>
 <html lang="en" class="ie8 no-js"> <![endif]-->
@@ -16,12 +20,13 @@
     <meta content="" name="description"/>
     <meta content="" name="author"/>
 
-    <link rel="stylesheet" href="https://bootswatch.com/superhero/bootstrap.css"/>
-    <link rel="stylesheet" type="text/css" href="new_mvc_php_framework/js/bootstrap/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://bootswatch.com/yeti/bootstrap.css"/>
 
-    <script type="text/javascript" src="new_mvc_php_framework/js/jquery-3.1.1.min.js"></script>
-    <script type="text/javascript" src="new_mvc_php_framework/js/bootstrap/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="new_mvc_php_framework/js/bootstrap/bootstrap-confirmation/bootstrap-confirmation.min.js"></script>
+<!--    <link rel="stylesheet" type="text/css" href="--><?php //echo $uriJunk?><!--/js/bootstrap/bootstrap-3.3.7-dist/css/bootstrap.min.css">-->
+
+    <script type="text/javascript" src="<?php echo $uriJunk?>/js/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="<?php echo $uriJunk?>/js/bootstrap/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="<?php echo $uriJunk?>/js/bootstrap/bootstrap-confirmation/bootstrap-confirmation.min.js"></script>
 </head>
 <body>
 <nav class="navbar navbar-default">

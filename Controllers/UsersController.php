@@ -12,8 +12,11 @@ namespace FPopov\Controllers;
 use FPopov\Core\MVC\SessionInterface;
 use FPopov\Core\ViewInterface;
 use FPopov\Models\Binding\User\UserLoginBindingModel;
+use FPopov\Models\Binding\User\UserProfileEditBindingModel;
 use FPopov\Models\Binding\User\UserRegisterBindingModel;
 use FPopov\Models\View\ApplicationViewModel;
+use FPopov\Models\View\UserProfileEditViewModel;
+use FPopov\Models\View\UserProfileViewModel;
 use FPopov\Services\Application\AuthenticationService;
 use FPopov\Services\Application\AuthenticationServiceInterface;
 use FPopov\Services\Application\ResponseServiceInterface;
@@ -77,12 +80,50 @@ class UsersController
         throw new UserException('Please enter valid data');
     }
 
-    public function profile(SessionInterface $session)
+    public function profile()
     {
-        $model = [
-            'id' => $session->get('id')
-        ];
+        if (! $this->authenticationService->isAuthenticated()) {
+            $this->responseService->redirect('users', 'login');
+        }
 
-        $this->view->render($model);
+        $id = $this->authenticationService->getUserId();
+
+        $user = $this->service->findOne($id);
+
+        $viewModel = new UserProfileViewModel();
+        $viewModel->setUsername($user->getUsername());
+        $viewModel->setId($id);
+
+        $this->view->render($viewModel);
+    }
+
+    public function profileEdit($id)
+    {
+        $currentUserId = $this->authenticationService->getUserId();
+
+        if ($currentUserId != $id) {
+            $this->responseService->redirect('users', 'profileEdit', [$currentUserId]);
+        }
+
+        $user = $this->service->findOne($id);
+
+        $viewModel = new UserProfileEditViewModel($user->getId(), $user->getUsername(), $user->getPassword(), $user->getEmail(), $user->getBirthday(), false);
+
+        $this->view->render($viewModel);
+    }
+
+    public function profileEditPost($id, UserProfileEditBindingModel $bindingModel)
+    {
+        $currentUserId = $this->authenticationService->getUserId();
+
+        if ($currentUserId != $id) {
+            $this->responseService->redirect('users', 'profileEdit', [$currentUserId]);
+        }
+
+        $bindingModel->setId($id);
+
+        $this->service->edit($bindingModel);
+
+        $this->responseService->redirect('users', 'profile');
     }
 }

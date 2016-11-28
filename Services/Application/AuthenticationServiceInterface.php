@@ -16,4 +16,6 @@ interface AuthenticationServiceInterface
     public function logout();
 
     public function login($username, $password) : bool;
+
+    public function getUserId();
 }
