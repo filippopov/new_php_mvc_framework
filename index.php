@@ -39,5 +39,6 @@ $app->registerDependency(\FPopov\Services\User\UserServiceInterface::class, \FPo
 $app->registerDependency(\FPopov\Services\Application\EncryptionServiceInterface::class, \FPopov\Services\Application\BCryptEncryptionService::class);
 $app->registerDependency(\FPopov\Services\Application\AuthenticationServiceInterface::class, \FPopov\Services\Application\AuthenticationService::class);
 $app->registerDependency(\FPopov\Services\Application\ResponseServiceInterface::class, \FPopov\Services\Application\ResponseService::class);
+$app->registerDependency(\FPopov\Services\Category\CategoryServiceInterface::class, \FPopov\Services\Category\CategoryService::class);
 
 $app->start();
