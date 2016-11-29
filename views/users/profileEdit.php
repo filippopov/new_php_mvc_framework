@@ -1,7 +1,7 @@
 <?php
 /**
  * @var \FPopov\Core\ViewInterface $this
- * @var \FPopov\Models\View\UserProfileEditViewModel $model
+ * @var \FPopov\Models\View\User\UserProfileEditViewModel $model
  */
 ?>
 

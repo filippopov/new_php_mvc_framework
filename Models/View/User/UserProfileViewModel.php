@@ -6,7 +6,7 @@
  * Time: 20:37
  */
 
-namespace FPopov\Models\View;
+namespace FPopov\Models\View\User;
 
 
 class UserProfileViewModel

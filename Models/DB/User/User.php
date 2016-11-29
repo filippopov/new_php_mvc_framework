@@ -6,7 +6,7 @@
  * Time: 21:22
  */
 
-namespace FPopov\Models\DB;
+namespace FPopov\Models\DB\User;
 
 
 class User

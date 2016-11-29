@@ -10,7 +10,7 @@ namespace FPopov\Services\User;
 
 
 use FPopov\Models\Binding\User\UserProfileEditBindingModel;
-use FPopov\Models\DB\User;
+use FPopov\Models\DB\User\User;
 
 interface UserServiceInterface
 {

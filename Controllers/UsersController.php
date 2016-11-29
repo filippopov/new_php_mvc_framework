@@ -14,9 +14,8 @@ use FPopov\Core\ViewInterface;
 use FPopov\Models\Binding\User\UserLoginBindingModel;
 use FPopov\Models\Binding\User\UserProfileEditBindingModel;
 use FPopov\Models\Binding\User\UserRegisterBindingModel;
-use FPopov\Models\View\ApplicationViewModel;
-use FPopov\Models\View\UserProfileEditViewModel;
-use FPopov\Models\View\UserProfileViewModel;
+use FPopov\Models\View\User\UserProfileEditViewModel;
+use FPopov\Models\View\User\UserProfileViewModel;
 use FPopov\Services\Application\AuthenticationService;
 use FPopov\Services\Application\AuthenticationServiceInterface;
 use FPopov\Services\Application\ResponseServiceInterface;
@@ -60,9 +59,7 @@ class UsersController
 
     public function register()
     {
-        $viewModel = new ApplicationViewModel('Blog');
-
-        $this->view->render($viewModel);
+        $this->view->render();
     }
 
     public function registerPost(UserRegisterBindingModel $bindingModel)

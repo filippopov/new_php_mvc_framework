@@ -12,7 +12,7 @@ namespace FPopov\Services\Application;
 use FPopov\Adapter\Database;
 use FPopov\Adapter\DatabaseInterface;
 use FPopov\Core\MVC\SessionInterface;
-use FPopov\Models\DB\User;
+use FPopov\Models\DB\User\User;
 
 class AuthenticationService implements AuthenticationServiceInterface
 {

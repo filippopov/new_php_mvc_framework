@@ -13,7 +13,7 @@ use FPopov\Adapter\Database;
 use FPopov\Adapter\DatabaseInterface;
 use FPopov\Core\MVC\SessionInterface;
 use FPopov\Models\Binding\User\UserProfileEditBindingModel;
-use FPopov\Models\DB\User;
+use FPopov\Models\DB\User\User;
 use FPopov\Services\Application\EncryptionServiceInterface;
 
 class UserService implements UserServiceInterface

@@ -1,7 +1,3 @@
-<?php
-    /** @var \FPopov\Models\View\ApplicationViewModel $model */
-?>
-<h1>Welcome to my <?php echo $model->getName()?></h1>
 <div class="container">
     <div class="well bs-component">
         <form class="form-horizontal" method="post" action="/new_mvc_php_framework/users/registerPost">
