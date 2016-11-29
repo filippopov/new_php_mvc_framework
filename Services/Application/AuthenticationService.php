@@ -13,6 +13,8 @@ use FPopov\Adapter\Database;
 use FPopov\Adapter\DatabaseInterface;
 use FPopov\Core\MVC\SessionInterface;
 use FPopov\Models\DB\User\User;
+use FPopov\Repositories\User\UserRepository;
+use FPopov\Repositories\User\UserRepositoryInterface;
 
 class AuthenticationService implements AuthenticationServiceInterface
 {
@@ -22,11 +24,15 @@ class AuthenticationService implements AuthenticationServiceInterface
     private $session;
     private $encryptionService;
 
-    public function __construct(DatabaseInterface $db, SessionInterface $session, EncryptionServiceInterface $encryptionService)
+    /** @var  UserRepository */
+    private $userRepository;
+
+    public function __construct(DatabaseInterface $db, SessionInterface $session, EncryptionServiceInterface $encryptionService, UserRepositoryInterface $userRepository)
     {
         $this->db = $db;
         $this->session = $session;
         $this->encryptionService = $encryptionService;
+        $this->userRepository = $userRepository;
     }
 
     public function isAuthenticated() : bool
@@ -41,40 +47,19 @@ class AuthenticationService implements AuthenticationServiceInterface
 
     public function login($username, $password) : bool
     {
-        $query = "
-            SELECT
-                u.id,
-                u.username,
-                u.password,
-                u.full_name AS fullName,
-                u.first_name AS firstName,
-                u.last_name AS lastName,
-                u.is_active AS isActive,
-                u.email,
-                u.birthday,
-                u.role
-            FROM
-                users AS u
-            WHERE 
-                u.username = ?
-            LIMIT 1     
-        ";
+        $userParams = [
+            'username' => $username
+        ];
 
-        $stmt = $this->db->prepare($query);
+        $user = $this->userRepository->findByCondition($userParams, User::class, null, 'asc', 1, 0);
 
-        $stmt->execute(
-            [
-                $username
-            ]
-        );
-
-        /** @var User $user */
-        $user = $stmt->fetchObject(User::class);
+        $user = $user->current();
 
         if (empty($user)) {
             return false;
         }
 
+        /** @var User $user */
         $hash = $user->getPassword();
 
         if ($this->encryptionService->verify($password, $hash)) {

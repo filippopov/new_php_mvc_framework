@@ -12,49 +12,33 @@ namespace FPopov\Services\Category;
 use FPopov\Adapter\DatabaseInterface;
 use FPopov\Models\Binding\Category\CategoryAddBindingModel;
 use FPopov\Models\DB\Category\Category;
+use FPopov\Repositories\Categories\CategoryRepository;
+use FPopov\Repositories\Categories\CategoryRepositoryInterface;
 
 class CategoryService implements CategoryServiceInterface
 {
     private $db;
 
-    public function __construct(DatabaseInterface $db)
+    /** @var CategoryRepository */
+    private $categoryRepository;
+
+    public function __construct(DatabaseInterface $db, CategoryRepositoryInterface $categoryRepository)
     {
         $this->db = $db;
+        $this->categoryRepository = $categoryRepository;
     }
 
     public function add(CategoryAddBindingModel $bindingModel) : bool
     {
-        $query = "
-            INSERT INTO 
-                categories (name) 
-            VALUES (?)
-        ";
+        $categoryParams = [
+            'name' => $bindingModel->getName()
+        ];
 
-        $stmt = $this->db->prepare($query);
-
-        return $stmt->execute([
-            $bindingModel->getName()
-        ]);
+        return $this->categoryRepository->create($categoryParams);
     }
 
     public function findAll()
     {
-        $query = "
-            SELECT 
-                c.id,
-                c.name 
-            FROM 
-                categories AS c 
-            ORDER BY 
-                c.name
-        ";
-
-        $stmt = $this->db->prepare($query);
-
-        $stmt->execute();
-
-        while ($result = $stmt->fetchObject(Category::class)) {
-            yield $result;
-        }
+        return $this->categoryRepository->findAll(Category::class);
     }
 }

@@ -3,18 +3,6 @@
 include 'autoloader.php';
 include 'helper.php';
 
-
-//$test = [
-//    'opa' => ['tropa', 'test']
-//]
-
-$test = [
-    'username' => null,
-    'id' => 12
-];
-
-
-
 session_start();
 
 $uri = $_SERVER['REQUEST_URI'];
@@ -57,13 +45,14 @@ $app->registerDependency(\FPopov\Services\Application\AuthenticationServiceInter
 $app->registerDependency(\FPopov\Services\Application\ResponseServiceInterface::class, \FPopov\Services\Application\ResponseService::class);
 $app->registerDependency(\FPopov\Services\Category\CategoryServiceInterface::class, \FPopov\Services\Category\CategoryService::class);
 $app->registerDependency(\FPopov\Repositories\User\UserRepositoryInterface::class, \FPopov\Repositories\User\UserRepository::class);
+$app->registerDependency(\FPopov\Repositories\Categories\CategoryRepositoryInterface::class, \FPopov\Repositories\Categories\CategoryRepository::class);
 
+$app->start();
 
 //, ['username'=> 'Stela3', 'password' => password_hash('123', PASSWORD_BCRYPT)]
-$app->start();
-$repository = new \FPopov\Repositories\User\UserRepository(\FPopov\Adapter\Database::getInstance($dbInstanceName));
+//$repository = new \FPopov\Repositories\User\UserRepository(\FPopov\Adapter\Database::getInstance($dbInstanceName));
 /** @var \FPopov\Models\DB\User\User[] $res */
-$res = $repository->findAll(\FPopov\Models\DB\User\User::class);
-foreach ($res as $re){
-    dd($re->getUsername());
-}
+//$res = $repository->findByCondition(['username' => 'version1'], \FPopov\Models\DB\User\User::class);
+//foreach ($res as $re){
+//    dd($re);
+//}

@@ -17,11 +17,11 @@ class User
 
     private $password;
 
-    private $firstName;
+    private $first_name;
 
-    private $lastName;
+    private $last_name;
 
-    private $fullName;
+    private $full_name;
 
     private $role;
 
@@ -84,7 +84,7 @@ class User
      */
     public function getFirstName()
     {
-        return $this->firstName;
+        return $this->first_name;
     }
 
     /**
@@ -92,7 +92,7 @@ class User
      */
     public function setFirstName($firstName)
     {
-        $this->firstName = $firstName;
+        $this->first_name = $firstName;
     }
 
     /**
@@ -100,15 +100,15 @@ class User
      */
     public function getLastName()
     {
-        return $this->lastName;
+        return $this->last_name;
     }
 
     /**
-     * @param mixed $lastName
+     * @param mixed $last_name
      */
-    public function setLastName($lastName)
+    public function setLastName($last_name)
     {
-        $this->lastName = $lastName;
+        $this->last_name = $last_name;
     }
 
     /**
@@ -116,15 +116,15 @@ class User
      */
     public function getFullName()
     {
-        return $this->fullName;
+        return $this->full_name;
     }
 
     /**
-     * @param mixed $fullName
+     * @param mixed $full_name
      */
-    public function setFullName($fullName)
+    public function setFullName($full_name)
     {
-        $this->fullName = $fullName;
+        $this->full_name = $full_name;
     }
 
     /**

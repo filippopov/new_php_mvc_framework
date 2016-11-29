@@ -14,6 +14,8 @@ use FPopov\Adapter\DatabaseInterface;
 use FPopov\Core\MVC\SessionInterface;
 use FPopov\Models\Binding\User\UserProfileEditBindingModel;
 use FPopov\Models\DB\User\User;
+use FPopov\Repositories\User\UserRepository;
+use FPopov\Repositories\User\UserRepositoryInterface;
 use FPopov\Services\Application\EncryptionServiceInterface;
 
 class UserService implements UserServiceInterface
@@ -21,61 +23,28 @@ class UserService implements UserServiceInterface
     private $db;
     private $encryptionService;
 
-    public function __construct(DatabaseInterface $db, EncryptionServiceInterface $encryptionService)
+    /** @var  UserRepository */
+    private $userRepository;
+
+    public function __construct(DatabaseInterface $db, EncryptionServiceInterface $encryptionService, UserRepositoryInterface $userRepository)
     {
         $this->db = $db;
         $this->encryptionService = $encryptionService;
+        $this->userRepository = $userRepository;
     }
 
     public function register($username, $password) : bool
     {
-        $query = "
-            INSERT INTO 
-                users (username, password) 
-            VALUES (?, ?);
-        ";
-
-        $stmt = $this->db->prepare($query);
-
-        return $stmt->execute(
-            [
-                $username,
-                $this->encryptionService->hash($password)
-            ]
-        );
+        return $this->userRepository->create([
+            'username' => $username,
+            'password' => $this->encryptionService->hash($password)
+        ]);
     }
 
     public function findOne($id) : User
     {
-        $query = "
-            SELECT
-                u.id,
-                u.username,
-                u.password,
-                u.full_name AS fullName,
-                u.first_name AS firstName,
-                u.last_name AS lastName,
-                u.is_active AS isActive,
-                u.email,
-                u.birthday,
-                u.role
-            FROM
-                users AS u
-            WHERE 
-                u.id = ?
-            LIMIT 1     
-        ";
-
-        $stmt = $this->db->prepare($query);
-
-        $stmt->execute(
-            [
-                $id
-            ]
-        );
-
         /** @var User $user */
-        $user = $stmt->fetchObject(User::class);
+        $user = $this->userRepository->findOneRowById($id, User::class);
 
         return $user;
     }
@@ -86,25 +55,13 @@ class UserService implements UserServiceInterface
             return false;
         }
 
-        $query = "
-            UPDATE 
-                users
-            SET 
-                username = ?, 
-                password = ?, 
-                email = ?, 
-                birthday = ?
-            WHERE 
-                id = ?
-        ";
+        $params = [
+            'username' => $bindingModel->getUsername(),
+            'password' => $this->encryptionService->hash($bindingModel->getPassword()),
+            'email' => $bindingModel->getEmail(),
+            'birthday' => $bindingModel->getBirthday(),
+        ];
 
-        $stmt = $this->db->prepare($query);
-        return $stmt->execute([
-            $bindingModel->getUsername(),
-            $this->encryptionService->hash($bindingModel->getPassword()),
-            $bindingModel->getEmail(),
-            $bindingModel->getBirthday(),
-            $bindingModel->getId()
-        ]);
+        return $this->userRepository->update($bindingModel->getId(), $params);
     }
 }

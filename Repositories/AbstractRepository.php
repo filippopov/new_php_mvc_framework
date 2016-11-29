@@ -29,38 +29,6 @@ abstract class AbstractRepository
 
     abstract public function setOptions();
 
-    public function buildWhereCondition(array $conditions = array())
-    {
-        if (count($conditions) == 0) {
-            return false;
-        }
-
-        $and = '';
-        $where = '';
-        $placeholder = '?';
-
-        foreach ($conditions as $column => $value) {
-            if (is_array($value)) {
-                if (isset($value['comparator']) && isset($value['value'])) {
-                    $where .= $and . $column . ' ' . $value['comparator'] . ' ' . $placeholder;
-                } else {
-                    $valuesAsString = '(';
-                    foreach ($value as $singleValue) {
-                        $valuesAsString .= $placeholder . ', ';
-                    }
-                    $valuesAsString = substr($valuesAsString, 0, count($valuesAsString) - 3) . ')';
-                    $where .= $and . $column . ' IN ' . $valuesAsString;
-
-                }
-            } else {
-                $where .= $and . $column . ' = ' . $placeholder;
-            }
-            $and = ' AND ';
-        }
-
-        return $where;
-    }
-
     public function create(array $bindParams = array()) : bool
     {
         if (count($bindParams) == 0) {
@@ -164,38 +132,79 @@ abstract class AbstractRepository
         }
     }
 
-//    public function findBy($conditions, $assoc = true, $forceIndex = null, $sortBy = null, $sortDir = 'asc', $limit = null, $offset = 0)
-//    {
-//        $this->checkSetup(__METHOD__);
-//
-//        if (false === $where = $this->buildWhereExpressionFromConditions($conditions)) {
-//            return array();
-//        }
-//
-//        $fi = $this->buildForceIndex($forceIndex);
-//
-//        $sort = '';
-//        if(! is_null($sortBy)) {
-//            $sort = " ORDER BY {$sortBy} " . strtoupper($sortDir);
-//        }
-//
-//        $limitBy = '';
-//        if (! is_null($limit)) {
-//            $limit = (int) $limit;
-//            $offset = (int) $offset;
-//            $limitBy = " LIMIT {$limit} OFFSET {$offset} ";
-//        }
-//
-//        $sql = "SELECT * FROM {$this->tableName} {$fi} WHERE {$where}{$sort}{$limitBy}";
-//        if ($assoc === PDO::FETCH_CLASS) {
-//            if (! class_exists($this->entityClassName)) {
-//                throw new DatabaseException('Could not use loaders to repo which do not have entityClassName info.');
-//            }
-//            return $this->adapter->exec($sql, $conditions)->fetchAll(PDO::FETCH_CLASS, $this->entityClassName);
-//        } else if ($assoc) {
-//            return $this->adapter->exec($sql, $conditions)->fetchAll(PDO::FETCH_ASSOC);
-//        } else {
-//            return $this->adapter->exec($sql, $conditions)->fetchAll();
-//        }
-//    }
+    public function findByCondition($condition, $dbClass, $sortBy = null, $sortDir = 'asc', $limit = null, $offset = 0)
+    {
+        if (false === $where = $this->buildWhereCondition($condition)) {
+            return false;
+        }
+
+        $sort = '';
+        if (! is_null($sortBy)) {
+            $sort = " ORDER BY {$sortBy} " . strtoupper($sortDir);
+        }
+
+        $limitBy = '';
+        if (! is_null($limit)) {
+            $limit = (int) $limit;
+            $offset = (int) $offset;
+            $limitBy = " LIMIT {$limit} OFFSET {$offset} ";
+        }
+
+        $query = "
+            SELECT 
+                *
+            FROM
+                {$this->tableName}
+            WHERE
+                {$where}
+                {$sort}
+                {$limitBy}
+        ";
+
+        $stmt = $this->db->prepare($query);
+
+        $stmt->execute($condition);
+
+        while ($result = $stmt->fetchObject($dbClass)) {
+            yield $result;
+        }
+    }
+
+    private function buildWhereCondition(array &$conditions = array())
+    {
+        if (count($conditions) == 0) {
+            return false;
+        }
+
+        $and = '';
+        $where = '';
+        $placeholder = '?';
+
+        foreach ($conditions as $column => $value) {
+            if (is_array($value)) {
+                if (isset($value['comparator']) && isset($value['value'])) {
+                    $where .= $and . $column . ' ' . $value['comparator'] . ' ' . $placeholder;
+                } else {
+                    $valueData = [];
+                    $valuesAsString = '(';
+                    foreach ($value as $singleValue) {
+                        $valuesAsString .= $placeholder . ', ';
+                        $valueData[] = $singleValue;
+                    }
+                    $valuesAsString = substr($valuesAsString, 0, count($valuesAsString) - 3) . ')';
+                    $where .= $and . $column . ' IN ' . $valuesAsString;
+                    unset($conditions[$column]);
+                    $conditions = $valueData;
+                }
+            } else {
+                $where .= $and . $column . ' = ' . $placeholder;
+                unset($conditions[$column]);
+                $conditions[] = $value;
+            }
+            $and = ' AND ';
+
+        }
+
+        return $where;
+    }
 }
