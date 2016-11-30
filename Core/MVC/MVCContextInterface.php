@@ -18,4 +18,6 @@ interface MVCContextInterface
     public function getUriJunk() : string;
 
     public function getArguments() : array;
+
+    public function getGetParams() : string;
 }

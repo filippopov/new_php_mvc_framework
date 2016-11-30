@@ -10,12 +10,14 @@ namespace FPopov\Services\Category;
 
 
 use FPopov\Adapter\DatabaseInterface;
+use FPopov\Core\View;
 use FPopov\Models\Binding\Category\CategoryAddBindingModel;
 use FPopov\Models\DB\Category\Category;
 use FPopov\Repositories\Categories\CategoryRepository;
 use FPopov\Repositories\Categories\CategoryRepositoryInterface;
+use FPopov\Services\AbstractService;
 
-class CategoryService implements CategoryServiceInterface
+class CategoryService extends AbstractService implements CategoryServiceInterface
 {
     private $db;
 
@@ -39,6 +41,40 @@ class CategoryService implements CategoryServiceInterface
 
     public function findAll()
     {
-        return $this->categoryRepository->findAll(Category::class);
+        $aCollStruct = [
+            'id' => [
+                'title' => 'Id',
+                'type' => self::TYPE_DATA
+            ],
+            'name' => [
+                'title' => 'Name',
+                'type' => self::TYPE_DATA
+            ]
+        ];
+
+        $repoData = $this->categoryRepository->testGrid();
+
+        $data = $this->generateGridData($aCollStruct, $repoData);
+
+        $table = [
+            'tableData' => $data
+        ];
+
+        return $table;
+
+//        return $this->categoryRepository->findAll(Category::class);
     }
+
 }
+
+
+
+//$table = array(
+//    'tableSearchFields' => $aSearchFields,
+//    'tableOrderFields' => $aOrderColls,
+//    'tableData' => $aOrders,
+//    'filter' => $this->returnFilters($bindFilter),
+//    'navigation' => $navigationInfo
+//);
+//
+//return $table;

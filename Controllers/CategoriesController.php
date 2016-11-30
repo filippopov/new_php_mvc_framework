@@ -42,6 +42,7 @@ class CategoriesController
     public function view()
     {
         $categories = $this->categoryService->findAll();
+
         $this->view->render($categories);
     }
 

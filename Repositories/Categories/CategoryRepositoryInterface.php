@@ -11,5 +11,5 @@ namespace FPopov\Repositories\Categories;
 
 interface CategoryRepositoryInterface
 {
-
+    public function testGrid();
 }

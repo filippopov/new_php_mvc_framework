@@ -16,9 +16,10 @@ use FPopov\Models\Binding\User\UserProfileEditBindingModel;
 use FPopov\Models\DB\User\User;
 use FPopov\Repositories\User\UserRepository;
 use FPopov\Repositories\User\UserRepositoryInterface;
+use FPopov\Services\AbstractService;
 use FPopov\Services\Application\EncryptionServiceInterface;
 
-class UserService implements UserServiceInterface
+class UserService extends AbstractService  implements UserServiceInterface
 {
     private $db;
     private $encryptionService;

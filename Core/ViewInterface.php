@@ -14,4 +14,6 @@ interface ViewInterface
     public function render($templateName = null, $model = null);
 
     public function uri($controller, $action, $params = []);
+
+    public function generateUriWithOrderParams($fieldName, $aFilter = array());
 }

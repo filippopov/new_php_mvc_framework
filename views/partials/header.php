@@ -21,9 +21,9 @@ $uriJunk = isset($uriJunk) ? $uriJunk : '';
     <meta content="" name="description"/>
     <meta content="" name="author"/>
 
-    <link rel="stylesheet" href="https://bootswatch.com/yeti/bootstrap.css"/>
+<!--    <link rel="stylesheet" href="https://bootswatch.com/yeti/bootstrap.css"/>-->
 
-<!--    <link rel="stylesheet" type="text/css" href="--><?php //echo $uriJunk?><!--/js/bootstrap/bootstrap-3.3.7-dist/css/bootstrap.min.css">-->
+    <link rel="stylesheet" type="text/css" href="<?php echo $uriJunk?>/js/bootstrap/bootstrap-3.3.7-dist/css/bootstrap.min.css">
 
     <script type="text/javascript" src="<?php echo $uriJunk?>/js/jquery-3.1.1.min.js"></script>
     <script type="text/javascript" src="<?php echo $uriJunk?>/js/bootstrap/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>

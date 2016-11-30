@@ -31,6 +31,7 @@ class View implements ViewInterface
         $controller = $this->mvcContext->getController();
         $action = $this->mvcContext->getAction();
         $uriJunk = $this->mvcContext->getUriJunk();
+        $getParams = $this->mvcContext->getGetParams();
 
         if ($templateName === null ) {
             $templateName = $controller . DIRECTORY_SEPARATOR . $action;
@@ -72,5 +73,23 @@ class View implements ViewInterface
         }
 
         return $url;
+    }
+
+    public function generateUriWithOrderParams($fieldName, $aFilter = array())
+    {
+        $aFilter['filter']['page'] = 0;
+        if (
+            ! isset($aFilter['filter'], $aFilter['filter']['order'], $aFilter['filter']['order'][$fieldName])
+            || strtoupper($aFilter['filter']['order'][$fieldName]) != 'ASC'
+        ) {
+            $orderDest = 'ASC';
+        } else {
+            $orderDest = 'DESC';
+        }
+        $aFilter['filter']['order'] = array(
+            $fieldName => $orderDest
+        );
+
+        return self::uri($this->mvcContext->getController(), $this->mvcContext->getAction(), $this->mvcContext->getArguments()) . '?' . http_build_query($aFilter);
     }
 }

@@ -15,8 +15,9 @@ use FPopov\Core\MVC\SessionInterface;
 use FPopov\Models\DB\User\User;
 use FPopov\Repositories\User\UserRepository;
 use FPopov\Repositories\User\UserRepositoryInterface;
+use FPopov\Services\AbstractService;
 
-class AuthenticationService implements AuthenticationServiceInterface
+class AuthenticationService extends AbstractService implements AuthenticationServiceInterface
 {
     const AUTHENTICATION_ID = 'id';
 

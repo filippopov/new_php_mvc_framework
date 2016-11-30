@@ -12,6 +12,11 @@ $self = str_replace('index.php', '', $self);
 
 $uri = str_replace($self, '', $uri);
 
+$getParamsArray = explode('?', $uri);
+
+$getParams = isset($getParamsArray[1]) ? $getParamsArray[1] : '';
+$uri = isset($getParamsArray[0]) ? $getParamsArray[0] : '';
+
 $args = explode('/', $uri);
 
 $controllerName = array_shift($args);
@@ -30,7 +35,7 @@ $dbInstanceName = 'default';
 
 
 
-$mvcContext = new \FPopov\Core\MVC\MVCContext($controllerName, $actionName, $self, $args);
+$mvcContext = new \FPopov\Core\MVC\MVCContext($controllerName, $actionName, $self, $args, $getParams);
 
 $app = new \FPopov\Core\Application($mvcContext);
 
