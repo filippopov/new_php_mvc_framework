@@ -24,11 +24,11 @@ class ResponseService implements ResponseServiceInterface
     {
         $url = $this->mvcContext->getUriJunk()
             . $controller
-            . DIRECTORY_SEPARATOR
+            . '/'
             . $action;
 
         if (! empty($params)) {
-            $url .= DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $params);
+            $url .= '/' . implode('/', $params);
         }
 
         header("Location: $url");

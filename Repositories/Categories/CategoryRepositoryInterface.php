@@ -11,5 +11,7 @@ namespace FPopov\Repositories\Categories;
 
 interface CategoryRepositoryInterface
 {
-    public function testGrid();
+    public function testGrid($params = array());
+
+    public function testGridCount($params = array());
 }

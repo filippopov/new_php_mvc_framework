@@ -8,22 +8,22 @@
 
 namespace FPopov\Repositories;
 
-
-use FPopov\Adapter\Database;
 use FPopov\Adapter\DatabaseInterface;
-use FPopov\UserExceptions\ApplicationException;
+use FPopov\Exceptions\ApplicationException;
 
 abstract class AbstractRepository
 {
     protected $tableName;
     protected $primaryKeyName;
     protected $db;
+    protected $orderField = null;
 
     public function __construct(DatabaseInterface $db)
     {
         $options = $this->setOptions();
         $this->tableName = isset($options['tableName']) ? $options['tableName'] : '';
         $this->primaryKeyName = isset($options['primaryKeyName']) ? $options['primaryKeyName'] : '';
+        $this->orderField = isset($options['orderField']) ? $options['orderField'] : $this->primaryKeyName;
         $this->db = $db;
     }
 
@@ -102,7 +102,8 @@ abstract class AbstractRepository
         return $stmt->execute([$id]);
     }
 
-    public function findOneRowById(int $id, $dbClass)
+
+    public function findOneRowById(int $id, $dbClass = null)
     {
         $query = "
             SELECT * FROM {$this->tableName} WHERE {$this->primaryKeyName} = ?
@@ -110,14 +111,15 @@ abstract class AbstractRepository
 
         $stmt = $this->db->prepare($query);
         $stmt->execute([$id]);
+
+        if (empty($dbClass)) {
+            return $stmt->fetch();
+        }
+
         return $stmt->fetchObject($dbClass);
     }
 
-    /**
-     * @param $dbClass
-     * @return \Generator
-     */
-    public function findAll($dbClass)
+    public function findAll($dbClass = null)
     {
         $query = "
             SELECT * FROM {$this->tableName} ORDER BY {$this->primaryKeyName} ASC
@@ -127,12 +129,14 @@ abstract class AbstractRepository
 
         $stmt->execute();
 
-        while ($result = $stmt->fetchObject($dbClass)) {
-            yield $result;
+        if (empty($dbClass)) {
+            return $stmt->fetchAll();
+        } else {
+            return $stmt->fetchObject($dbClass);
         }
     }
 
-    public function findByCondition($condition, $dbClass, $sortBy = null, $sortDir = 'asc', $limit = null, $offset = 0)
+    public function findByCondition($condition, $dbClass = null, $sortBy = null, $sortDir = 'asc', $limit = null, $offset = 0)
     {
         if (false === $where = $this->buildWhereCondition($condition)) {
             return false;
@@ -164,10 +168,87 @@ abstract class AbstractRepository
         $stmt = $this->db->prepare($query);
 
         $stmt->execute($condition);
-
-        while ($result = $stmt->fetchObject($dbClass)) {
-            yield $result;
+        if (empty($dbClass)) {
+            return $stmt->fetchAll();
+        } else {
+            return $stmt->fetchObject($dbClass);
         }
+    }
+
+    protected function buildQuery(array &$params, array $listOfFields, $searchFields = array(), $orderFields = array())
+    {
+        $limitBy = '';
+        if (isset($params['page'])) {
+            $limit = (int) $params['page']['limit'];
+            $offset = (int) $params['page']['offset'];
+            $limitBy = " LIMIT {$limit} OFFSET {$offset} ";
+        }
+
+        unset($params['page']);
+
+        $where = '';
+        if (isset($params['search'])) {
+            $searches = $params['search'];
+            $pattern = '/^\d+$/';
+            foreach ($searches as $field => $search) {
+                if (isset($searchFields[$field])) {
+                    $match = preg_match($pattern, $search, $searchResult);
+                    $comparator = $match ? '=' : 'LIKE';
+                    $searchFieldName = $searchFields[$field];
+
+                    $params[$field] = $match ? $search : '%' . $search . '%';
+
+                    $where .= ' AND' . ' ' . $searchFieldName . ' ' . $comparator . ' :' . $field . ' ';
+                }
+            }
+
+            unset($params['search']);
+        }
+
+        $orderBy = array();
+        if (! empty($params['order'])) {
+            if (empty($orderFields)) {
+                $orderFields = $listOfFields;
+            }
+            foreach ($params['order'] AS $keyField => $valueOrder) {
+                if (isset($orderFields[$keyField])) {
+                    $orderBy[] = $orderFields[$keyField] . ' ' . $valueOrder;
+                } else if (in_array($keyField, $orderFields)) {
+                    $orderBy[] = $keyField . ' ' . $valueOrder;
+                }
+            }
+
+        }
+        if (empty($orderBy)) {
+            if (isset($orderFields[$this->orderField])) {
+                $orderBy[] = $orderFields[$this->orderField] . ' ASC';
+            } else {
+                $orderBy[] = $this->orderField . ' ASC';
+            }
+        }
+        $orderBy = "
+            ORDER BY
+            " . implode(', ', $orderBy) ."
+        ";
+        unset($params['order']);
+
+
+        $select = array();
+        if (isset($params['onlyCount']) && $params['onlyCount']) {
+            $select[] = 'COUNT(' . ($params['onlyCount'] !== true ? $params['onlyCount'] : $this->primaryKeyName) . ') AS count';
+            $limitBy = '';
+            $orderBy = '';
+            unset($params['onlyCount']);
+        } else {
+            $select = $listOfFields;
+        }
+
+        return array(
+            $select,
+            $where,
+            $orderBy,
+            $limitBy
+        );
     }
 
     private function buildWhereCondition(array &$conditions = array())

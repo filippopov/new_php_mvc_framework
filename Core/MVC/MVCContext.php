@@ -19,7 +19,7 @@ class MVCContext implements MVCContextInterface
 
     private $uriJunk;
 
-    private $getParams;
+    private $getParams = [];
 
     /**
      * MVCContext constructor.
@@ -28,7 +28,7 @@ class MVCContext implements MVCContextInterface
      * @param array $arguments
      * @param $uriJunk
      */
-    public function __construct(string $controller, string $action, string $uriJunk, array $arguments, string $getParams)
+    public function __construct(string $controller, string $action, string $uriJunk, array $arguments, array $getParams)
     {
         $this->controller = $controller;
         $this->action = $action;
@@ -37,18 +37,29 @@ class MVCContext implements MVCContextInterface
         $this->getParams = $getParams;
     }
 
+
+    public function getOneGetParam(string $key) : string
+    {
+        return $this->getParams[$key];
+    }
+
+    public function setOneGetParam($key, $value)
+    {
+        $this->getParams[$key] = $value;
+    }
+
     /**
-     * @return string
+     * @return array
      */
-    public function getGetParams(): string
+    public function getGetParams(): array
     {
         return $this->getParams;
     }
 
     /**
-     * @param string $getParams
+     * @param array $getParams
      */
-    public function setGetParams(string $getParams)
+    public function setGetParams(array $getParams)
     {
         $this->getParams = $getParams;
     }
@@ -116,5 +127,4 @@ class MVCContext implements MVCContextInterface
     {
         $this->uriJunk = $uriJunk;
     }
-
 }

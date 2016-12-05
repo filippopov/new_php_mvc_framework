@@ -9,18 +9,15 @@
 namespace FPopov\Controllers;
 
 
-use FPopov\Core\MVC\SessionInterface;
 use FPopov\Core\ViewInterface;
 use FPopov\Models\Binding\User\UserLoginBindingModel;
 use FPopov\Models\Binding\User\UserProfileEditBindingModel;
 use FPopov\Models\Binding\User\UserRegisterBindingModel;
 use FPopov\Models\View\User\UserProfileEditViewModel;
 use FPopov\Models\View\User\UserProfileViewModel;
-use FPopov\Services\Application\AuthenticationService;
 use FPopov\Services\Application\AuthenticationServiceInterface;
 use FPopov\Services\Application\ResponseServiceInterface;
 use FPopov\Services\User\UserServiceInterface;
-use FPopov\UserExceptions\UserException;
 
 class UsersController
 {
@@ -29,7 +26,11 @@ class UsersController
     private $authenticationService;
     private $responseService;
 
-    public function __construct(ViewInterface $view, UserServiceInterface $service, AuthenticationServiceInterface $authenticationService, ResponseServiceInterface $responseService)
+    public function __construct(
+        ViewInterface $view,
+        UserServiceInterface $service,
+        AuthenticationServiceInterface $authenticationService,
+        ResponseServiceInterface $responseService)
     {
         $this->view = $view;
         $this->service = $service;
@@ -54,7 +55,8 @@ class UsersController
             exit();
         }
 
-        throw new UserException('Please enter valid data');
+        $this->responseService->redirect('users', 'login');
+        exit();
     }
 
     public function register()
@@ -68,13 +70,13 @@ class UsersController
         $password = $bindingModel->getPassword();
 
         $registerResult = $this->service->register($username, $password);
-
         if ($registerResult) {
             $this->responseService->redirect('users', 'login');
             exit();
         }
 
-        throw new UserException('Please enter valid data');
+        $this->responseService->redirect('users', 'register');
+        exit();
     }
 
     public function profile()
@@ -91,7 +93,11 @@ class UsersController
         $viewModel->setUsername($user->getUsername());
         $viewModel->setId($id);
 
-        $this->view->render($viewModel);
+        $params = [
+            'model' => $viewModel
+        ];
+
+        $this->view->render($params);
     }
 
     public function profileEdit($id)
@@ -106,7 +112,11 @@ class UsersController
 
         $viewModel = new UserProfileEditViewModel($user->getId(), $user->getUsername(), $user->getPassword(), $user->getEmail(), $user->getBirthday(), false);
 
-        $this->view->render($viewModel);
+        $params = [
+            'model' => $viewModel
+        ];
+
+        $this->view->render($params);
     }
 
     public function profileEditPost($id, UserProfileEditBindingModel $bindingModel)

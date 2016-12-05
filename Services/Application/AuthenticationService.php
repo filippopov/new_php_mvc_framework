@@ -8,9 +8,8 @@
 
 namespace FPopov\Services\Application;
 
-
-use FPopov\Adapter\Database;
 use FPopov\Adapter\DatabaseInterface;
+use FPopov\Core\MVC\Message;
 use FPopov\Core\MVC\SessionInterface;
 use FPopov\Models\DB\User\User;
 use FPopov\Repositories\User\UserRepository;
@@ -52,22 +51,21 @@ class AuthenticationService extends AbstractService implements AuthenticationSer
             'username' => $username
         ];
 
+        /** @var User $user */
         $user = $this->userRepository->findByCondition($userParams, User::class, null, 'asc', 1, 0);
 
-        $user = $user->current();
-
         if (empty($user)) {
+            Message::postMessage('Not found user, with this username', Message::NEGATIVE_MESSAGE);
             return false;
         }
 
-        /** @var User $user */
         $hash = $user->getPassword();
 
         if ($this->encryptionService->verify($password, $hash)) {
             $this->session->set('id', $user->getId());
             return true;
         }
-
+        Message::postMessage('Please enter valid password', Message::NEGATIVE_MESSAGE);
         return false;
     }
 

@@ -9,9 +9,8 @@
 namespace FPopov\Services\User;
 
 
-use FPopov\Adapter\Database;
 use FPopov\Adapter\DatabaseInterface;
-use FPopov\Core\MVC\SessionInterface;
+use FPopov\Core\MVC\Message;
 use FPopov\Models\Binding\User\UserProfileEditBindingModel;
 use FPopov\Models\DB\User\User;
 use FPopov\Repositories\User\UserRepository;
@@ -36,10 +35,35 @@ class UserService extends AbstractService  implements UserServiceInterface
 
     public function register($username, $password) : bool
     {
-        return $this->userRepository->create([
+        if (strlen($username) < 5) {
+            Message::postMessage('Username must be, at least five or more symbols', Message::NEGATIVE_MESSAGE);
+            return false;
+        }
+
+        if (strlen($password) < 5) {
+            Message::postMessage('Password must be, at least five or more symbols', Message::NEGATIVE_MESSAGE);
+            return false;
+        }
+
+        $isExistUsername = $this->userRepository->findByCondition(['username' => $username]);
+
+        if (! empty($isExistUsername)) {
+            Message::postMessage('Username exist', Message::NEGATIVE_MESSAGE);
+            return false;
+        }
+
+        $userRegister = $this->userRepository->create([
             'username' => $username,
             'password' => $this->encryptionService->hash($password)
         ]);
+
+        if ($userRegister) {
+            Message::postMessage('Successfully register user', Message::POSITIVE_MESSAGE);
+        } else {
+            Message::postMessage('Please try again', Message::NEGATIVE_MESSAGE);
+        }
+
+        return $userRegister;
     }
 
     public function findOne($id) : User

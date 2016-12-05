@@ -15,5 +15,15 @@ interface CategoryServiceInterface
 {
     public function add(CategoryAddBindingModel $bindingModel) : bool;
 
-    public function findAll();
+    public function findAll($params);
+
+    public function edit($id);
+
+    public function editPost($id, $name);
+
+    public function addGridCategory();
+
+    public function generateGridCategory($name);
+
+    public function deleteCategory($id);
 }

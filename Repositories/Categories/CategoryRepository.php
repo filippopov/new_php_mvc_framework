@@ -30,20 +30,51 @@ class CategoryRepository extends AbstractRepository implements CategoryRepositor
         );
     }
 
-    public function testGrid()
+    public function testGrid($params = array())
     {
+        $listOfFields = [
+            'c.id',
+            'c.name'
+        ];
+
+        $searchFields = [
+            'id' => 'c.id',
+            'name' => 'c.name'
+        ];
+
+        $orderFields = [
+            'id' => 'c.id',
+            'name' => 'c.name'
+        ];
+
+        $onlyCount = isset($params['onlyCount']) ? true : false;
+
+        list($select, $where, $order, $limit) = $this->buildQuery($params, $listOfFields, $searchFields, $orderFields);
+
         $query = "
             SELECT
-                c.id,
-                c.name
+                " . implode(', ', $select) . "
             FROM
                 categories AS c
+            WHERE 
+                TRUE    
         ";
+
+        $query .= $where . $order . $limit;
 
         $stmt = $this->db->prepare($query);
 
-        $stmt->execute();
+        $stmt->execute($params);
 
         return $stmt->fetchAll();
+    }
+
+    public function testGridCount($params = array())
+    {
+        $params['onlyCount'] = '*';
+
+        $result = $this->testGrid($params);
+
+        return isset($result[0]) ? $result[0]['count'] : 0;
     }
 }

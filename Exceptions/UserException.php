@@ -6,7 +6,7 @@
  * Time: 11:12
  */
 
-namespace FPopov\UserExceptions;
+namespace FPopov\Exceptions;
 
 
 class UserException extends \Exception

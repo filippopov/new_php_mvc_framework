@@ -12,10 +12,39 @@ $self = str_replace('index.php', '', $self);
 
 $uri = str_replace($self, '', $uri);
 
-$getParamsArray = explode('?', $uri);
+$getParams = explode('?', $uri);
 
-$getParams = isset($getParamsArray[1]) ? $getParamsArray[1] : '';
-$uri = isset($getParamsArray[0]) ? $getParamsArray[0] : '';
+$uri = array_shift($getParams);
+
+if(! empty($getParams)) {
+    $getParams = $getParams[0];
+    $getParams = explode('&', $getParams);
+    foreach ($getParams as $key => $value) {
+        parse_str($value, $arr);
+        unset($getParams[$key]);
+        $getParams[$key] = $arr;
+    }
+}
+$test = array_values($getParams);
+
+foreach ($getParams as $key => $value) {
+    if (is_array($value)) {
+        $temporaryKey = key($value);
+        if (key_exists($temporaryKey, $getParams)) {
+            $secondKey = key($value[$temporaryKey]);
+            if (key_exists($secondKey, $getParams[$temporaryKey])) {
+                $takeKey = key($value[$temporaryKey][$secondKey]);
+                $getParams[$temporaryKey][$secondKey][$takeKey] = $value[$temporaryKey][$secondKey][$takeKey];
+            } else {
+                $getParams[$temporaryKey][$secondKey] = $value[$temporaryKey][$secondKey];
+            }
+        } else {
+            $getParams[$temporaryKey] = $value[$temporaryKey];
+        }
+    }
+    unset($getParams[$key]);
+}
+
 
 $args = explode('/', $uri);
 
@@ -32,8 +61,6 @@ $dbInstanceName = 'default';
     \FPopov\Config\DbConfig::DB_NAME,
     $dbInstanceName
 );
-
-
 
 $mvcContext = new \FPopov\Core\MVC\MVCContext($controllerName, $actionName, $self, $args, $getParams);
 
@@ -54,10 +81,14 @@ $app->registerDependency(\FPopov\Repositories\Categories\CategoryRepositoryInter
 
 $app->start();
 
-//, ['username'=> 'Stela3', 'password' => password_hash('123', PASSWORD_BCRYPT)]
-//$repository = new \FPopov\Repositories\User\UserRepository(\FPopov\Adapter\Database::getInstance($dbInstanceName));
-/** @var \FPopov\Models\DB\User\User[] $res */
-//$res = $repository->findByCondition(['username' => 'version1'], \FPopov\Models\DB\User\User::class);
-//foreach ($res as $re){
-//    dd($re);
+//try {
+//    $app->start();
+//} catch (Exception $e) {
+//    \FPopov\Core\MVC\Message::setError($e->getMessage());
+//    foreach (\FPopov\Core\MVC\Message::returnMessages() as $value) {
+//        echo $value->text;
+//    }
 //}
+
+
+

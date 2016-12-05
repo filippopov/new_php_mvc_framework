@@ -19,5 +19,7 @@ interface MVCContextInterface
 
     public function getArguments() : array;
 
-    public function getGetParams() : string;
+    public function getGetParams() : array;
+
+    public function getOneGetParam(string $key) : string;
 }

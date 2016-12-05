@@ -1,0 +1,120 @@
+@CHARSET "ISO-8859-1";
+.table th, .table > thead > tr > th {
+    width: 100px;
+    vertical-align: middle;
+    padding: 2px;
+    background-color: #b3b3b3;
+    color: black;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+.table-cell {
+    text-align: center;
+    border: 1px solid #606060 !important;
+    vertical-align: inherit;
+}
+
+.border {
+    border: 1px solid #606060 !important;
+}
+
+.table-header-color {
+    color: black;
+    cursor: pointer;
+}
+
+.pagination > li > a, .pagination > li > span {
+    color: black;
+}
+
+.pagination > .active > a, .pagination > .active > a:focus,
+.pagination > .active > a:hover, .pagination > .active > span,
+.pagination > .active > span:focus, .pagination > .active > span:hover {
+    color: black;
+    background-color: #b3b3b3;
+}
+
+.pagination > li > a:hover, .pagination > li > span:hover {
+    background-color: #b3b3b3;
+}
+
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+    background-color: #b3b3b3;
+}
+
+.table tbody tr:hover, .table tbody tr.hover {
+    background-color: #b3b3b3;
+}
+
+.table td, .table > tbody > tr > td {
+    padding: 3px;
+}
+
+.panel {
+    overflow-x: scroll;
+}
+
+.pagination {
+    position: relative;
+}
+
+
+#fixedTable {
+    z-index: 2;
+    background-color: rgba(255, 255, 255, 1);
+    position: absolute;
+    width: auto;
+}
+
+#responsiveTable {
+    margin-right: 10px;
+}
+
+#tablesContainer {
+    overflow-y: hidden;
+    overflow-x: overlay;
+    position: relative;
+    display: flex;
+    padding-top: 15px;
+    width: 100%;
+}
+
+.table tr input.small {
+    width: 100%;
+}
+
+#filter {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.row {
+    padding-left: 15px;
+}
+
+.modal-row {
+    width: 100%;
+    padding-bottom: 10px
+}
+
+.modal-label {
+    float: left;
+    width: 40%;
+}
+
+.modal-input {
+    width: 60%
+}
+
+.save-button-container {
+    width: 100%;
+    text-align: center;
+    margin-top: 15px;
+}
+
+#modalForm {
+    display: inline-block;
+}

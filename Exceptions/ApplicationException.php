@@ -6,7 +6,7 @@
  * Time: 0:31
  */
 
-namespace FPopov\UserExceptions;
+namespace FPopov\Exceptions;
 
 
 class ApplicationException extends \Exception

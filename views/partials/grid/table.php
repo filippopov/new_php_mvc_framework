@@ -24,7 +24,7 @@ foreach ($colHeader as $header) {
     }
 }
 
-$filter = isset($filter) ? $filter : array();
+$filter = isset($model['filter']) ? $model['filter'] : array();
 
 $aFieldClosure = array(
     \FPopov\Services\AbstractService::TYPE_DATA => function ($cell) {
@@ -60,21 +60,16 @@ $aFieldClosure = array(
 
         return $result;
     },
-    \FPopov\Services\AbstractService::TYPE_CHECKBOX => function ($cell) {
-        $class = isset($cell['class']) ? ' class="' . $cell['class'] . '" ' : '';
-        $checked = $cell['value'] ? 'checked' : '';
-
-        return '<input type="checkbox" name="' . $cell['fieldName'] .'"  value="1" ' . $checked . ' ' . $class . '/>';
-    },
     \FPopov\Services\AbstractService::TYPE_ACTIONS => function ($cell) {
         $actions = array();
         static $index = 0;
+
         foreach ($cell['actions'] AS $actionKey => $actionUrl) {
 
             $tmpAction = '<div class="btn btn-icon-only fa-item"';
             switch ($actionKey) {
                 case 'edit' :
-                    $tmpAction .= ' onclick="edit(\'' . $actionUrl .'\')"><i class="fa fa-edit" title="Edit"></i>';
+                    $tmpAction .= ' onclick="createOrUpdate(\'' . $actionUrl .'\')"><i class="fa fa-edit" title="Edit"></i>';
                     break;
                 case 'delete' :
                     $tmpAction .= ' onclick="remove(\'' . $actionUrl .'\', ' . ++$index . ')"><i id="button' . $index .'" class="fa fa-remove" title="Delete"></i>';
@@ -89,13 +84,10 @@ $aFieldClosure = array(
         }
 
         return implode(' ', $actions);
-    },
-    \FPopov\Services\AbstractService::TYPE_JSON => function ($cell, $rowNumber) {
-        return ($cell['value'] == '' || $cell['value'] == '[]') ? '' : '<div class="hidden" type="hidden" id="json-' . $rowNumber . '">' . $cell['value'] . '</div>' .
-               '<input type="button" class="btn btn-info" value="Show json data" onclick=\'prettyPrint("json-' . $rowNumber . '")\'>';
     }
 );
 ?>
+
 <table class="table table-striped" id="<?php echo isset($tableId) ? $tableId : 'table'; ?>">
     <thead>
         <tr>
@@ -120,7 +112,7 @@ $aFieldClosure = array(
         <?php foreach ($tableData as $rowNumber => $tableRows) :?>
             <tr>
                 <?php foreach ($tableRows as $tableCell) : ?>
-                    <td class="table-cell <?php echo isset($aHiddenRow[$tableCell['name']]) ? 'hidden' : ''; ?> text-align-<?php echo $align = isset($textAlign[$tableCell['typeOfData']]) ? $textAlign[$tableCell['typeOfData']] : ''?>" style="vertical-align: inherit">
+                    <td class="table-cell <?php echo isset($aHiddenRow[$tableCell['name']]) ? 'hidden' : ''; ?>" style="vertical-align: inherit">
                          <?php echo $aFieldClosure[$tableCell['type']]($tableCell, $rowNumber); ?>
                     </td>
                 <?php endforeach; ?>

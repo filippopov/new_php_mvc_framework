@@ -10,7 +10,7 @@ namespace FPopov\Core;
 
 
 use FPopov\Core\MVC\MVCContextInterface;
-use FPopov\UserExceptions\ApplicationException;
+use FPopov\Exceptions\ApplicationException;
 
 class Application
 {

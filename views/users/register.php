@@ -9,21 +9,6 @@
                         <input class="form-control" name="username" id="inputUsername" placeholder="Username" type="text">
                     </div>
                 </div>
-                <!---->
-                <!--                <div class="form-group">-->
-                <!--                    <label for="inputfName" class="col-lg-2 control-label">First name</label>-->
-                <!--                    <div class="col-lg-10">-->
-                <!--                        <input class="form-control" name="firstName" id="inputfName" placeholder="First name" type="text">-->
-                <!--                    </div>-->
-                <!--                </div>-->
-                <!---->
-                <!--                <div class="form-group">-->
-                <!--                    <label for="inputlName" class="col-lg-2 control-label">Last name</label>-->
-                <!--                    <div class="col-lg-10">-->
-                <!--                        <input class="form-control" name="lastName" id="inputlName" placeholder="Last name" type="text">-->
-                <!--                    </div>-->
-                <!--                </div>-->
-
                 <div class="form-group">
                     <label for="inputPassword" class="col-lg-2 control-label">Password</label>
                     <div class="col-lg-10">
